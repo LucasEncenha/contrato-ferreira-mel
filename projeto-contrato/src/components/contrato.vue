@@ -330,7 +330,7 @@
 
                 <div class="assinaturas-container">
                     <div class="assinatura-left">
-                        <img :src="assinatura" alt="Assinatura Testemunha 1" class="assinatura">
+                        <img src="./../../public/assinaturas/assinatura-laiza.jpg" alt="Assinatura Testemunha 1" class="assinatura">
                         <hr class="linha">
                         <p>TESTEMUNHA 1</p>
                     </div>

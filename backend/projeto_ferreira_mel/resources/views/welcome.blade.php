@@ -13,6 +13,12 @@
         <h1 class="text-center">CONTRATO DE LOCAÇÃO DA POUSADA DO MEL</h1>
         <br>
 
+        <form method="POST" action="{{ route('logout') }}" class="position-fixed top-0 end-0 m-3 z-3">
+            @csrf
+            <button type="submit" class="btn btn-danger">Sair</button>
+        </form>
+               
+
         <form action={{route('dadosContrato.store')}} method="POST">
             @csrf
             <br>
