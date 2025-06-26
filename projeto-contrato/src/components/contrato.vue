@@ -316,7 +316,7 @@
 
                 <div class="assinaturas-container">
                     <div class="assinatura-left">
-                        <img :src="assinatura" alt="Assinatura Locador" class="assinatura">
+                        <img src="./../../public/assinaturas/Marcos.jpg" alt="Assinatura Locador" class="assinatura">
                         <hr class="linha">
                         <p>LOCADOR - MARCOS FERREIRA</p>
                     </div>
@@ -330,13 +330,13 @@
 
                 <div class="assinaturas-container">
                     <div class="assinatura-left">
-                        <img src="./../../public/assinaturas/assinatura-laiza.jpg" alt="Assinatura Testemunha 1" class="assinatura">
+                        <img src="./../../public/assinaturas/Laiza.jpg" alt="Assinatura Testemunha 1" class="assinatura">
                         <hr class="linha">
                         <p>TESTEMUNHA 1</p>
                     </div>
 
                     <div class="assinatura-right">
-                        <img :src="assinatura" alt="Assinatura Testemunha 2" class="assinatura">
+                        <img src="./../../public/assinaturas/Tania.jpg" alt="Assinatura Testemunha 2" class="assinatura">
                         <hr class="linha">
                         <p>TESTEMUNHA 2</p>
                     </div>
@@ -416,8 +416,8 @@ export default {
         font-family: 'Aptos', 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
     }
     .assinatura {
-        width: 15em;
-        height: 5em;
+        width: 16em;
+        height: 6em;
         object-fit: contain;
     }
 
