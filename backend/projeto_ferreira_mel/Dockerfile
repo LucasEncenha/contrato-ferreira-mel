@@ -46,9 +46,6 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Instalar dependências do Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# --- NOVA LINHA PARA RODAR AS MIGRAÇÕES ---
-RUN php artisan migrate --force
-
 # Expor a porta 80 para o Nginx
 EXPOSE 80
 
