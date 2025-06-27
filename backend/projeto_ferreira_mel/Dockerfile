@@ -49,4 +49,4 @@ RUN composer install --no-dev --optimize-autoloader
 # Expor a porta 80 para o Nginx
 EXPOSE 80
 
-CMD ["sh", "-c", "php artisan about 2>&1 | tee /dev/stderr && tail -f /dev/null"]
+CMD ["sh", "-c", "nginx && php-fpm"]
