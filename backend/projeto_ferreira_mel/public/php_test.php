@@ -1,1 +1,3 @@
-echo "<?php echo 'PHP is working!'; ?>"
+<?php 
+phpinfo();
+?>
