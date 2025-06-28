@@ -46,6 +46,14 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Instalar dependências do Composer
 RUN composer install --no-dev --optimize-autoloader
 
+# >>>>>>>>>>>>>>>>> NOVAS LINHAS ADICIONADAS AQUI <<<<<<<<<<<<<<<<<
+# Limpar caches do Laravel para garantir que as configurações mais recentes sejam usadas
+RUN php artisan cache:clear \
+    && php artisan config:clear \
+    && php artisan route:clear \
+    && php artisan view:clear
+# >>>>>>>>>>>>>>>>> FIM DAS NOVAS LINHAS <<<<<<<<<<<<<<<<<
+
 # Expor a porta 80 para o Nginx
 EXPOSE 80
 
