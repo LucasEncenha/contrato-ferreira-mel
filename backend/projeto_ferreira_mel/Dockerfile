@@ -2,11 +2,11 @@
 FROM php:8.2-fpm-alpine
 
 # Instalar extensões PHP necessárias para Laravel
+# Instalar extensões PHP necessárias para Laravel
 RUN apk add --no-cache \
     nginx \
     php-json \
     php-mbstring \
-    php-pdo_mysql \
     php-tokenizer \
     php-xml \
     php-fileinfo \
@@ -20,7 +20,7 @@ RUN apk add --no-cache \
     php-exif \
     php-intl \
     php-iconv \
-    php-mysqli \
+    php-pdo_pgsql \ 
     php-fpm
 
 # Copiar o arquivo de configuração do Nginx
