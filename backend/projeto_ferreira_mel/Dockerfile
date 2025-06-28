@@ -1,7 +1,7 @@
 # Usar uma imagem base PHP com Nginx (FPM)
-FROM php:8.2-fpm-alpine
+# Opcional: Considere mudar para php:8.3-fpm-alpine para ser explícito
+FROM php:8.2-fpm-alpine 
 
-# Instalar extensões PHP necessárias para Laravel
 # Instalar extensões PHP necessárias para Laravel
 RUN apk add --no-cache \
     nginx \
@@ -26,8 +26,8 @@ RUN apk add --no-cache \
 # Copiar o arquivo de configuração do Nginx
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copiar o arquivo de configuração PHP-FPM
-COPY www.conf /etc/php82/php-fpm.d/www.conf
+# ***** CORREÇÃO AQUI: AJUSTADO O DIRETÓRIO DO PHP-FPM PARA 8.3 *****
+COPY www.conf /etc/php83/php-fpm.d/www.conf
 
 # Definir o diretório de trabalho
 WORKDIR /var/www/html
@@ -46,13 +46,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Instalar dependências do Composer
 RUN composer install --no-dev --optimize-autoloader
 
-# >>>>>>>>>>>>>>>>> NOVAS LINHAS ADICIONADAS AQUI <<<<<<<<<<<<<<<<<
 # Limpar caches do Laravel para garantir que as configurações mais recentes sejam usadas
 RUN php artisan cache:clear \
     && php artisan config:clear \
     && php artisan route:clear \
     && php artisan view:clear
-# >>>>>>>>>>>>>>>>> FIM DAS NOVAS LINHAS <<<<<<<<<<<<<<<<<
 
 # Expor a porta 80 para o Nginx
 EXPOSE 80

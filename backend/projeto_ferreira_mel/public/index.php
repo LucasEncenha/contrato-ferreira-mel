@@ -1,8 +1,6 @@
 <?php
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
-echo "<h1>Hello from Raw PHP on Render!</h1>";
-phpinfo();
 
 define('LARAVEL_START', microtime(true));
 

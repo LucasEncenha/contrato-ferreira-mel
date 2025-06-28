@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-Route::get('/teste-render', function () {
+Route::get('/', function () {
     return 'Laravel está funcionando no Render!';
 });
 
