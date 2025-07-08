@@ -10,14 +10,17 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">CONTRATO DE LOCAÇÃO DA POUSADA DO MEL</h1>
-        <br>
-
-        <form method="POST" action="{{ route('logout') }}" class="position-fixed top-0 end-0 m-3 z-3">
-            @csrf
-            <button type="submit" class="btn btn-danger">Sair</button>
-        </form>
-               
+        <div class="row">
+            <div class="col-md-11">
+                <h1 class="text-center mt-4">CONTRATO DE LOCAÇÃO DA POUSADA DO MEL</h1>
+            </div>
+            <div class="col-md-1">
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-danger mt-4">Sair</button>
+                </form>
+            </div>
+        </div> 
 
         <form action={{route('dadosContrato.store')}} method="POST">
             @csrf

@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: ferreira_mel
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./data/backend-database:/var/lib/postgresql/data

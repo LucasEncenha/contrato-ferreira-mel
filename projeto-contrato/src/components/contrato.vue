@@ -316,7 +316,7 @@
 
                 <div class="assinaturas-container">
                     <div class="assinatura-left">
-                        <img src="./../../public/assinaturas/Marcos.jpg" alt="Assinatura Locador" class="assinatura">
+                        <img src="./../../public/assinaturas/Marcos.png" alt="Assinatura Locador" class="assinatura">
                         <hr class="linha">
                         <p>LOCADOR - MARCOS FERREIRA</p>
                     </div>
@@ -330,13 +330,13 @@
 
                 <div class="assinaturas-container">
                     <div class="assinatura-left">
-                        <img src="./../../public/assinaturas/Laiza.jpg" alt="Assinatura Testemunha 1" class="assinatura">
+                        <img src="./../../public/assinaturas/Laiza.png" alt="Assinatura Testemunha 1" class="assinatura">
                         <hr class="linha">
                         <p>TESTEMUNHA 1</p>
                     </div>
 
                     <div class="assinatura-right">
-                        <img src="./../../public/assinaturas/Tania.jpg" alt="Assinatura Testemunha 2" class="assinatura">
+                        <img src="./../../public/assinaturas/Tania.png" alt="Assinatura Testemunha 2" class="assinatura">
                         <hr class="linha">
                         <p>TESTEMUNHA 2</p>
                     </div>
@@ -391,15 +391,24 @@ export default {
                 margin: 15,
                 filename: 'contrato.pdf',
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
                 pagebreak: { mode: ['avoid-all', 'css', 'legacy'] },
             };
 
             html2pdf().set(opt).from(el).save();
+
+            const whatsappNumber = '5518997209030';
+
+            setTimeout(() => {
+                window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`, '_blank');
+            }, 1000);
         },
         apagarToken() {
-            axios.put(`http://localhost:8000/api/dadosContrato/${this.token}`).then(response => {
+            axios.put(`https://contratoferreiramel.com/api/dadosContrato/${this.token}`).then(response => {
                 console.log("Sucesso!");
             })
             .catch(error => {
@@ -415,29 +424,118 @@ export default {
     #contrato {
         font-family: 'Aptos', 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
     }
-    .assinatura {
-        width: 16em;
-        height: 6em;
-        object-fit: contain;
-    }
-
-    .assinatura-left, .assinatura-right {
-        text-align: center;
-        width: 45%;
-        margin-top: 20px;
-    }
 
     .assinaturas-container {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-top: 50px;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: flex-end;
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+
+    .assinatura-left,
+    .assinatura-right {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        flex: 1;
+        min-width: 250px;
+        max-width: 45%;
+    }
+
+    .assinatura {
+        max-width: 150px;
+        height: auto;
+        margin-bottom: 5px;
+        display: block;
     }
 
     .linha {
-        width: 18em;
-        border-bottom: 1px solid black;
-        margin: 10px auto;
+        border: 0;
+        border-top: 1px solid #000;
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+
+    .assinatura-left p,
+    .assinatura-right p {
+        text-align: center;
+        font-size: 0.9em;
+        color: #333;
+        margin-top: 0;
+    }
+
+    @media (max-width: 768px) {
+        .assinaturas-container {
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .assinatura-left,
+        .assinatura-right {
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .assinatura {
+            max-width: 120px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .assinatura-left p,
+        .assinatura-right p {
+            font-size: 0.8em;
+        }
+    }
+
+    @media print {
+        .assinaturas-container {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-around;
+            align-items: flex-end;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .assinatura-left,
+        .assinatura-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 0 0 auto;
+            width: 250px;
+            max-width: 250px;
+        }
+
+        .assinatura {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 5px;
+        }
+
+        .linha {
+            width: 100%;
+            border-top: 1px solid #000;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        .assinatura-left p,
+        .assinatura-right p {
+            text-align: center;
+            font-size: 0.9em;
+            color: #333;
+            margin-top: 0;
+        }
+
+        .no-print {
+            display: none !important;
+        }
     }
 
     p {

@@ -412,7 +412,6 @@ export default {
     mounted() {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
-        
         axios.get(`https://contratoferreiramel.com/api/dadosContrato/${token}`).then(response => {
             this.dadosContrato = response.data.data;
             this.token = token;
