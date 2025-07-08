@@ -404,7 +404,7 @@ export default {
             const whatsappNumber = '5518997209030';
 
             setTimeout(() => {
-                window.open(`https://wa.me/${whatsappNumber}?text=${whatsappMessage}`, '_blank');
+                window.open(`https://wa.me/${whatsappNumber}`, '_blank');
             }, 1000);
         },
         apagarToken() {
