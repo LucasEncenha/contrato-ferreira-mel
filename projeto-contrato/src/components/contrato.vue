@@ -32,8 +32,6 @@
 
                 <p><strong>Tipo de Evento:</strong> {{ dados.tipoEvento }}</p>
 
-                <p><strong>Data do Evento:</strong> {{ dayjs(dados.data).format('DD/MM/YYYY') }}</p>
-
                 <p><strong>Número previsto de pessoas:</strong> {{ dados.qtdePessoas }}</p>
 
                 <br>

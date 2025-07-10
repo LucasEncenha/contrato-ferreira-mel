@@ -38,9 +38,6 @@
                 <label><strong>Tipo de Evento:</strong></label>
                 <input type="text" placeholder="Digite aqui..." class="form-control" v-model="dados.tipoEvento" required>
     
-                <label><strong>Data do Evento:</strong></label>
-                <input type="date" class="form-control" v-model="dados.data" required>
-    
                 <label><strong>Número previsto de pessoas:</strong></label>
                 <input type="number" class="form-control" v-model="dados.qtdePessoas" required>
     
@@ -331,20 +328,37 @@
                 </div>
                 
                 <br>
-                
-                <div class="row">
-                    <div ref="canvasWrapper" class="w-100">
-                        <label>Assinatura</label>
-                        <canvas
-                            ref="canvas"
-                            class="border rounded w-100"
-                            style="height: 250px;"
-                        ></canvas>
-                    </div>
+
+                <div class="text-center">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#contratoBaixadoModal">
+                        Assinar Contrato
+                    </button>
                 </div>
-                
-                <div class="text-center mt-3 mb-4">
-                    <button type="button" class="btn btn-danger m-1" @click="limpar()">Apagar assinatura</button>
+
+                <div class="modal fade" id="contratoBaixadoModal" tabindex="-1" aria-labelledby="contratoBaixadoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-fullscreen modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="contratoBaixadoModalLabel">ASSINATURA</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <div ref="canvasWrapper" class="w-100">
+                                    <label>Assinatura</label>
+                                    <canvas
+                                        ref="canvas"
+                                        class="border rounded w-100"
+                                        style="height: 300px;"
+                                    ></canvas>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <div class="text-center mt-3 mb-4">
+                                    <button type="button" class="btn btn-danger m-1" @click="limpar()">Apagar assinatura</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
     
                 <div class="text-center mt-3 mb-4">
