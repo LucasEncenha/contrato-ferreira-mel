@@ -335,7 +335,7 @@
                     </button>
                 </div>
 
-                <div class="modal fade" id="contratoBaixadoModal" tabindex="-1" aria-labelledby="contratoBaixadoModalLabel" aria-hidden="true">
+                <!-- <div class="modal fade" id="contratoBaixadoModal" tabindex="-1" aria-labelledby="contratoBaixadoModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-fullscreen modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -359,29 +359,58 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
     
                 <div class="text-center mt-3 mb-4">
                     <button type="submit" class="btn btn-primary mt-3">Verificar contrato</button>
                 </div>
             </form>
-            <div class="modal fade" id="contratoModal" tabindex="-1">
-                <div class="modal-dialog modal-fullscreen">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Contrato</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <contrato :dados="dados" :dadosContrato="dadosContrato" :assinatura="assinatura" :token="token"/>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div v-else class="alert alert-danger text-center p-4 rounded shadow">
             <h1 class="h4 mb-2">Token não encontrado</h1>
             <p class="mb-0">Verifique se o link está correto ou se já foi utilizado.</p>
+        </div>
+        <div v-show="token">
+            <div class="modal fade" id="contratoBaixadoModal" tabindex="-1" aria-labelledby="contratoBaixadoModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-fullscreen modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="contratoBaixadoModalLabel">ASSINATURA</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body text-center">
+                                <div ref="canvasWrapper" class="w-100">
+                                    <label>Assinatura</label>
+                                    <canvas
+                                        ref="canvas"
+                                        class="border rounded w-100"
+                                        style="height: 300px;"
+                                    ></canvas>
+                                </div>
+                            </div>
+                            <div class="modal-footer justify-content-center">
+                                <div class="text-center mt-3 mb-4">
+                                    <button type="button" class="btn btn-danger m-1" @click="limpar()">Apagar assinatura</button>
+                                    <button type="button" class="btn btn-primary m-1" @click="salvarAssinatura()">Confirmar Assinatura</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="modal fade" id="contratoModal" tabindex="-1">
+                    <div class="modal-dialog modal-fullscreen">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Contrato</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <contrato :dados="dados" :dadosContrato="dadosContrato" :assinatura="assinatura" :token="token"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </div>
     </div>
 </template>
@@ -414,38 +443,49 @@ export default {
             pad: null,
             dadosContrato: '',
             erro: '',
-            token: false
+            token: false,
+            assinaturaModalInstance: null
         }
     },
     components: {
         contrato
     },
-    created() {
-        
-    },
     mounted() {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
-        axios.get(`https://contratoferreiramel.com/api/dadosContrato/${token}`).then(response => {
-            this.dadosContrato = response.data.data;
-            this.token = token;
-
-            nextTick(() => {
-                this.formatarCanvas();
+        axios.get(`https://contratoferreiramel.com/api/dadosContrato/${token}`)
+            .then(response => {
+                this.dadosContrato = response.data.data;
+                this.token = token;
+            })
+            .catch(error => {
+                console.error('2. Erro ao buscar dados:', error);
+                this.token = false;
             });
-        })
-        .catch(error => {
-            console.error('Erro ao buscar dados:', error);
-        });
 
-        window.addEventListener('resize', this.formatarCanvas);
-        
+        const assinaturaModalElement = document.getElementById('contratoBaixadoModal');
+        if (assinaturaModalElement) {
+            this.assinaturaModalInstance = new bootstrap.Modal(assinaturaModalElement);
+
+            assinaturaModalElement.addEventListener('shown.bs.modal', () => {
+                this.PadAssinatura();
+            });
+
+            assinaturaModalElement.addEventListener('hidden.bs.modal', () => {});
+        }
     },
     beforeUnmount() {
-        window.removeEventListener('resize', this.formatarCanvas);
+        const assinaturaModalElement = document.getElementById('contratoBaixadoModal');
+        if (assinaturaModalElement) {
+            assinaturaModalElement.removeEventListener('shown.bs.modal', this.PadAssinatura);
+            assinaturaModalElement.removeEventListener('hidden.bs.modal', this.salvar);
+        }
+        if (this.pad) {
+            this.pad.off();
+        }
     },
     methods: {
-        formatarCanvas() {
+        PadAssinatura() {
             const canvas = this.$refs.canvas;
             const wrapper = this.$refs.canvasWrapper;
 
@@ -453,41 +493,74 @@ export default {
                 return;
             }
 
-            const ratio = window.devicePixelRatio || 1;
             const width = wrapper.offsetWidth;
-            const height = 200;
+            const height = 300;
+
+            if (width === 0 || wrapper.offsetHeight === 0) {
+                 nextTick(() => {
+                     const updatedWidth = wrapper.offsetWidth;
+                     const updatedHeight = wrapper.offsetHeight;
+                     if (updatedWidth > 0 && updatedHeight > 0) {
+                        this.setupAssinatura(updatedWidth, updatedHeight);
+                     }
+                 });
+                 return;
+            }
+
+            this.setupAssinatura(width, height);
+        },
+        setupAssinatura(width, height) {
+            const canvas = this.$refs.canvas;
+            if (!canvas) {
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            const ratio = window.devicePixelRatio || 1;
 
             canvas.width = width * ratio;
             canvas.height = height * ratio;
             canvas.style.width = `${width}px`;
             canvas.style.height = `${height}px`;
 
-            const ctx = canvas.getContext('2d');
             ctx.scale(ratio, ratio);
 
+            if (this.pad) {
+                this.pad.off();
+                this.pad.clear();
+            }
             this.pad = new SignaturePad(canvas);
         },
         abrirContrato() {
             if (!this.pad || this.pad.isEmpty()) {
-                alert('Por favor, assine antes de visualizar o contrato.');
+                alert('PCanvasor favor, assine antes de visualizar o contrato.');
                 return;
             }
 
             this.salvar();
-            const modal = new bootstrap.Modal(document.getElementById('contratoModal'));
-            modal.show();
+            const contratoModal = new bootstrap.Modal(document.getElementById('contratoModal'));
+            contratoModal.show();
         },
         salvar() {
-            this.assinatura = this.pad.toDataURL();
+            if (this.pad && !this.pad.isEmpty()) {
+                this.assinatura = this.pad.toDataURL();
+            } else {
+                this.assinatura = null;
+            }
         },
         limpar() {
-            this.pad.clear();
-            this.assinatura = null;
+            if (this.pad) {
+                this.pad.clear();
+                this.assinatura = null;
+            }
         },
+        salvarAssinatura() {
+            this.salvar();
+            alert("Assinatura salva!")
+        }
     }
 }
 </script>
-
 
 <style scoped>
     .contrato {
