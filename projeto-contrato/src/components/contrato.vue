@@ -399,7 +399,7 @@ export default {
 
             html2pdf().set(opt).from(el).save();
 
-            const whatsappNumber = '5518997209030';
+            const whatsappNumber = '5518981208192';
             const mensagem = "";
             setTimeout(() => {
                 window.open(`https://wa.me/${whatsappNumber}?text=${mensagem}`, '_blank');
