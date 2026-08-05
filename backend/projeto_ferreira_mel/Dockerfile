@@ -14,14 +14,12 @@ RUN apk add --no-cache \
     libxml2-dev \
     bash
 
-# Compilar e habilitar as extensões DENTRO do PHP oficial (não do PHP do Alpine)
+# Compilar e habilitar apenas as extensões que NÃO vêm por padrão na imagem oficial
+# (pdo, tokenizer, xml, json, ctype, session, dom, fileinfo já vêm prontos)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) \
-        pdo \
         pdo_pgsql \
         mbstring \
-        tokenizer \
-        xml \
         zip \
         gd \
         bcmath \
