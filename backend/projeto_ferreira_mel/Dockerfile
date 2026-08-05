@@ -52,7 +52,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN mkdir -p /var/run && chown www-data:www-data /var/run
 
 # Expor a porta (documentação apenas — o Render injeta $PORT em runtime)
-EXPOSE 80
+EXPOSE 80 
 
 # Em runtime: ajusta o Nginx pra escutar na porta que o Render definir,
 # roda as otimizações do Laravel (agora com as env vars reais disponíveis),
