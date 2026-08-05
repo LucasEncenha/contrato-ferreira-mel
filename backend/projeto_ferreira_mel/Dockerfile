@@ -1,3 +1,12 @@
+# ---- Stage 1: build dos assets front-end (Vite/Tailwind do Breeze) ----
+FROM node:20-alpine AS frontend
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# ---- Stage 2: imagem final PHP ----
 # Usar uma imagem base PHP com FPM (Alpine)
 FROM php:8.2-fpm-alpine
 
@@ -39,6 +48,9 @@ WORKDIR /var/www/html
 # Copiar o código da aplicação
 COPY . /var/www/html
 
+# Copiar os assets compilados pelo Vite (gerados no stage 'frontend')
+COPY --from=frontend /app/public/build /var/www/html/public/build
+
 # Instalar Composer e as dependências (sem dev, otimizado)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 RUN composer install --no-dev --optimize-autoloader
@@ -52,7 +64,7 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 RUN mkdir -p /var/run && chown www-data:www-data /var/run
 
 # Expor a porta (documentação apenas — o Render injeta $PORT em runtime)
-EXPOSE 80 
+EXPOSE 80
 
 # Em runtime: ajusta o Nginx pra escutar na porta que o Render definir,
 # roda as otimizações do Laravel (agora com as env vars reais disponíveis),
