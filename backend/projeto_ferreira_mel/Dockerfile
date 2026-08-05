@@ -1,8 +1,7 @@
-# Usar uma imagem base PHP com Nginx (FPM)
-# Opcional: Considere mudar para php:8.3-fpm-alpine para ser explícito
-FROM php:8.2-fpm-alpine 
+# Usar uma imagem base PHP com FPM (Alpine)
+FROM php:8.2-fpm-alpine
 
-# Instalar extensões PHP necessárias para Laravel
+# Instalar Nginx + extensões PHP necessárias para Laravel (com PostgreSQL)
 RUN apk add --no-cache \
     nginx \
     php-json \
@@ -20,14 +19,14 @@ RUN apk add --no-cache \
     php-exif \
     php-intl \
     php-iconv \
-    php-pdo_pgsql \ 
+    php-pdo_pgsql \
     php-fpm
 
-# Copiar o arquivo de configuração do Nginx
+# Copiar configuração do Nginx (usa variável $PORT em runtime — ver CMD abaixo)
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# ***** CORREÇÃO AQUI: AJUSTADO O DIRETÓRIO DO PHP-FPM PARA 8.3 *****
-COPY www.conf /etc/php83/php-fpm.d/www.conf
+# Diretório correto para PHP 8.2 no Alpine (era php83 antes — corrigido)
+COPY www.conf /etc/php82/php-fpm.d/www.conf
 
 # Definir o diretório de trabalho
 WORKDIR /var/www/html
@@ -35,24 +34,27 @@ WORKDIR /var/www/html
 # Copiar o código da aplicação
 COPY . /var/www/html
 
-# Configurar permissões de pasta (para storage e cache)
+# Instalar Composer e as dependências (sem dev, otimizado)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN composer install --no-dev --optimize-autoloader
+
+# Configurar permissões de pasta (storage e cache precisam ser graváveis)
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 755 /var/www/html/public
 
-# Instalar Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Instalar dependências do Composer
-RUN composer install --no-dev --optimize-autoloader
-
-# Limpar caches do Laravel para garantir que as configurações mais recentes sejam usadas
-RUN php artisan cache:clear \
-    && php artisan config:clear \
-    && php artisan route:clear \
-    && php artisan view:clear
-
-# Expor a porta 80 para o Nginx
+# Expor a porta (documentação apenas — o Render injeta $PORT em runtime)
 EXPOSE 80
 
-CMD ["sh", "-c", "nginx && php-fpm"]
+# Em runtime: ajusta o Nginx pra escutar na porta que o Render definir,
+# roda as otimizações do Laravel (agora com as env vars reais disponíveis),
+# aplica as migrations e sobe nginx + php-fpm
+CMD ["sh", "-c", "\
+    sed -i \"s/listen 80;/listen ${PORT:-80};/\" /etc/nginx/nginx.conf && \
+    php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php artisan migrate --force && \
+    nginx && \
+    php-fpm -F \
+"]
