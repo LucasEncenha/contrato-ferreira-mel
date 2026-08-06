@@ -11,7 +11,8 @@ RUN npm run build
 FROM php:8.2-fpm-alpine
 
 # Instalar Nginx + bibliotecas de sistema necessárias para compilar as extensões PHP
-RUN apk add --no-cache \
+RUN apk update && apk upgrade --no-cache \
+    && apk add --no-cache \
     nginx \
     postgresql-dev \
     libzip-dev \
